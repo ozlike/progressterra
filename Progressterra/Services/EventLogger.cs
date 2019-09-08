@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.AspNetCore.SignalR;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Progressterra.Context;
 using System;
@@ -26,7 +27,7 @@ namespace Progressterra.Services
 
         public Task StartAsync(CancellationToken cancellationToken)
         {
-            interrogatingThread = new Thread(InterrogateServices);
+            interrogatingThread = new Thread(Interrogating);
             interrogatingThread.Start();
 
             return Task.CompletedTask;
@@ -37,24 +38,30 @@ namespace Progressterra.Services
             return Task.CompletedTask;
         }
 
-        private async void InterrogateServices()
+        private void Interrogating()
         {
             while (true)
             {
-                using (var scope = scopeFactory.CreateScope())
-                {
-                    var context = scope.ServiceProvider.GetRequiredService<ProgressterraContext>();
-                    InterrogationService interrogationService = scope.ServiceProvider.GetRequiredService<InterrogationService>();
+                InterrogateServices();
+                Thread.Sleep(60 * 1000); //раз в минуту
+            }
+        }
+
+        private async void InterrogateServices()
+        {
+            using (var scope = scopeFactory.CreateScope())
+            {
+                var context = scope.ServiceProvider.GetRequiredService<ProgressterraContext>();
+                InterrogationService interrogationService = scope.ServiceProvider.GetRequiredService<InterrogationService>();
+                var dataSender = scope.ServiceProvider.GetRequiredService<IHubContext<DataSender>>();
 
 
-                    List<Event> events = await interrogationService.InterrogateServises();
-                    await context.Events.AddRangeAsync(events);
-                    await context.SaveChangesAsync();
-                }
+                List<Event> events = await interrogationService.InterrogateServises();
+                await context.Events.AddRangeAsync(events);
+                await context.SaveChangesAsync();
 
+                await dataSender.Clients.All.SendAsync("broadcastMessage", "hi my dear");
 
-                //раз в минуту
-                Thread.Sleep(60 * 1000);
             }
         }
     }
