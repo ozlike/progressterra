@@ -1,11 +1,34 @@
-﻿@{
+﻿
+@model List<ServiceStatus>
+@{
     ViewData["Title"] = "Главная страница";
 }
 
+
+@ViewBag.MaxResponseTime
+
+@Model
 
 
 
 
 
 <script src="/lib/signalr.min.js"></script>
-<script src="/js/main.js" asp-append-version="true"></script>
+<script>
+    var connection;
+
+    document.addEventListener('DOMContentLoaded', function () {
+        connection = new signalR.HubConnectionBuilder().withUrl('/data').build();
+        connection.on('broadcastMessage', bcast);
+        connection.start();
+
+
+
+
+    });
+
+    function bcast(message) {
+        alert("111");
+        let mes = 0;
+    }
+</script>
