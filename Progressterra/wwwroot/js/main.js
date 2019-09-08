@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 function bcast(message) {
-
+    alert("111");
     let mes = 0;
 }
 

@@ -34,16 +34,20 @@ namespace Progressterra
             });
 
             services.AddSignalR();
-            services.AddTransient<DataSender>();
             
             services.AddDbContext<ProgressterraContext>(option =>
                 option.UseSqlServer(Configuration.GetConnectionString("ProgressterraConnection")));
 
             services.AddTransient<InterrogationService>();
+            services.AddTransient<IDataProvider, DataProvider>();
 
-            services.AddSingleton<EventLogger>();
-            services.AddSingleton<IHostedService, EventLogger>(
-                serviceProvider => serviceProvider.GetService<EventLogger>());
+            services.AddSingleton(new ConfigClass(
+                (long)Configuration.GetValue(typeof(long) ,"MaxTimeAnswer"),
+                (int)Configuration.GetValue(typeof(int), "PollingRate")));
+
+            services.AddSingleton<ServiceEventsHandler>();
+            services.AddSingleton<IHostedService, ServiceEventsHandler>(
+                serviceProvider => serviceProvider.GetService<ServiceEventsHandler>());
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }

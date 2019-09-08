@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Threading.Tasks;
 
 namespace Progressterra.Services
@@ -30,21 +31,16 @@ namespace Progressterra.Services
 
         private async Task<Event> MakeQuery(Service service)
         {
-            //UriBuilder builder = new UriBuilder("http://localhost:6598/api/get");
-            //builder.Query = "kk";
-
             using (var httpClient = new HttpClient())
             {
+                httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/x-www-form-urlencoded"));
+                httpClient.DefaultRequestHeaders.Add("AccessKey", "test_05fc5ed1-0199-4259-92a0-2cd58214b29c");
+                
                 var stopWatch = Stopwatch.StartNew();
                 var result = await httpClient.GetAsync(service.Url);
+                await result.Content.ReadAsStringAsync();
                 long sec = stopWatch.ElapsedMilliseconds;
-
-
-
-                //var json = await result.Content.ReadAsStringAsync();
-
-
-
+                
                 return new Event
                 {
                     Available = result.StatusCode == System.Net.HttpStatusCode.OK,
