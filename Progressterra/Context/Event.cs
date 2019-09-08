@@ -9,7 +9,8 @@ namespace Progressterra.Context
     {
         public int Id { get; set; }
         public DateTime EventTime { get; set; }
-        public int ResponseTime { get; set; }
+        public long? ResponseTime { get; set; }
+        public bool Available { get; set; }
 
         public Service Service { get; set; }
         public int ServiceId { get; set; }

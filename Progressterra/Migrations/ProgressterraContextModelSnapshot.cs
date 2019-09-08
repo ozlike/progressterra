@@ -25,9 +25,11 @@ namespace Progressterra.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<bool>("Available");
+
                     b.Property<DateTime>("EventTime");
 
-                    b.Property<int>("ResponseTime");
+                    b.Property<long?>("ResponseTime");
 
                     b.Property<int>("ServiceId");
 

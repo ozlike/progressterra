@@ -10,7 +10,7 @@ using Progressterra.Context;
 namespace Progressterra.Migrations
 {
     [DbContext(typeof(ProgressterraContext))]
-    [Migration("20190908131313_AddEntities")]
+    [Migration("20190908143523_AddEntities")]
     partial class AddEntities
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -27,9 +27,11 @@ namespace Progressterra.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<bool>("Available");
+
                     b.Property<DateTime>("EventTime");
 
-                    b.Property<int>("ResponseTime");
+                    b.Property<long?>("ResponseTime");
 
                     b.Property<int>("ServiceId");
 

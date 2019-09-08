@@ -29,7 +29,8 @@ namespace Progressterra.Migrations
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     EventTime = table.Column<DateTime>(nullable: false),
-                    ResponseTime = table.Column<int>(nullable: false),
+                    ResponseTime = table.Column<long>(nullable: true),
+                    Available = table.Column<bool>(nullable: false),
                     ServiceId = table.Column<int>(nullable: false)
                 },
                 constraints: table =>

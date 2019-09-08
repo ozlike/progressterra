@@ -10,7 +10,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Progressterra.Context;
+using Progressterra.Services;
 
 namespace Progressterra
 {
@@ -37,11 +39,17 @@ namespace Progressterra
             services.AddDbContext<ProgressterraContext>(option =>
                 option.UseSqlServer(Configuration.GetConnectionString("ProgressterraConnection")));
 
+            services.AddTransient<InterrogationService>();
+
+            services.AddSingleton<EventLogger>();
+            services.AddSingleton<IHostedService, EventLogger>(
+                serviceProvider => serviceProvider.GetService<EventLogger>());
+
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, Microsoft.AspNetCore.Hosting.IHostingEnvironment env)
         {
             if (env.IsDevelopment())
             {
