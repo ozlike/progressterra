@@ -42,7 +42,7 @@ namespace Progressterra
             services.AddTransient<IDataProvider, DataProvider>();
 
             services.AddSingleton(new ConfigClass(
-                (long)Configuration.GetValue(typeof(long) ,"MaxResponseTime"),
+                (long)Configuration.GetValue(typeof(long), "MaxResponseTime"),
                 (int)Configuration.GetValue(typeof(int), "PollingRate")));
 
             services.AddSingleton<ServiceEventsHandler>();

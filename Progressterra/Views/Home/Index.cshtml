@@ -3,32 +3,103 @@
 @{
     ViewData["Title"] = "Главная страница";
 }
+<link href="/css/main.css" rel="stylesheet" asp-append-version="true" />
 
 
-@ViewBag.MaxResponseTime
 
-@Model
-
+<div class="content">
+    <table class="services-table">
+        <thead>
+            <tr>
+                <th>Название</th>
+                <th>Время ответа (мс.)</th>
+                <th>Сбои за час</th>
+                <th>Макс. время ответа</th>
+                <th>Сбои за день</th>
+                <th>Макс. время ответа</th>
+            </tr>
+        </thead>
+        <tbody id="services">
+            @foreach (var service in Model)
+            {
+                <tr serviceId="@service.Id" onclick="goToPage('@(Url.Action("Service", "Home", new { id= service.Id }))')" class="@Html.Raw(service.Available ? "" : "not-available")">
+                    <td><a href="@service.Url">@service.Name</a></td>
+                    <td class="ResponseTime @Html.Raw(service.ResponseTime > ViewBag.MaxResponseTime * 2 ? "danger" : "")">@service.ResponseTime</td>
+                    <td class="FailsInLastHour">@service.FailsInLastHour</td>
+                    @if (service.MaxDeviationInLastHour == null)
+                    {
+                        <td class="MaxDeviationInLastHour">-</td>
+                    }
+                    else
+                    { 
+                        <td class="MaxDeviationInLastHour warning">@service.MaxDeviationInLastHour.ToString()</td>
+                    }                    
+                    <td class="FailsInLastDay">@service.FailsInLastDay</td>
+                    @if (service.MaxDeviationInLastDay == null)
+                    {
+                        <td class="MaxDeviationInLastDay">-</td>
+                    }
+                    else
+                    { 
+                        <td class="MaxDeviationInLastDay warning">@service.MaxDeviationInLastDay.ToString()</td>
+                    }                    
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
 
 
 
 
 <script src="/lib/signalr.min.js"></script>
 <script>
-    var connection;
+    var connection, services;
 
     document.addEventListener('DOMContentLoaded', function () {
         connection = new signalR.HubConnectionBuilder().withUrl('/data').build();
         connection.on('broadcastMessage', bcast);
         connection.start();
 
-
-
-
+        services = document.getElementById("services").children;
     });
 
-    function bcast(message) {
-        alert("111");
-        let mes = 0;
+    function bcast(data) {
+        for (let service of data) {
+
+            let row = getServiceRowById(service.id);
+
+            setValueAndClass(row, "ResponseTime", service.responseTime, service.responseTime > @(ViewBag.MaxResponseTime * 2), "danger");
+            setValueAndClass(row, "FailsInLastHour", service.failsInLastHour);
+            setValueAndClass(row, "MaxDeviationInLastHour", service.maxDeviationInLastHour, service.maxDeviationInLastHour != null && service.maxDeviationInLastHour > @(ViewBag.MaxResponseTime * 2), "warning");
+            setValueAndClass(row, "FailsInLastDay", service.failsInLastDay);
+            setValueAndClass(row, "MaxDeviationInLastDay", service.maxDeviationInLastDay, service.maxDeviationInLastDay != null && service.maxDeviationInLastDay > @(ViewBag.MaxResponseTime * 2), "warning");
+
+            if (service.available) row.classList.remove("not-available");
+            else row.classList.add("not-available");
+
+            let mes = 0;
+        }
+
+
+    }
+
+    function getServiceRowById(serviceId) {
+        for (let service of services) {
+            if (service.getAttribute("serviceId") == serviceId)
+                return service;
+        }
+    }
+
+    function setValueAndClass(parent, childElementClass, value, setClass, className) {
+        let element = parent.getElementsByClassName(childElementClass)[0];
+        element.innerHTML = (value == null ? '-' : value);
+        if (setClass == undefined) return;
+        if (setClass) element.classList.add(className);
+        else element.classList.remove(className);
+    }
+
+    function goToPage(url) {
+        window.location.href = url;
     }
 </script>

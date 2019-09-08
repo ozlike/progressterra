@@ -22,7 +22,7 @@ namespace Progressterra.Context
 
         public async Task<List<ServiceStatus>> InterrogateServices()
         {
-            return await serviceEventsHandler.InterrogateServices();
+            return await serviceEventsHandler.InterrogateServices(false);
         }
     }
 }

@@ -86,21 +86,23 @@ namespace Progressterra.Services
             using (var scope = scopeFactory.CreateScope())
             {
                 var dataSender = scope.ServiceProvider.GetRequiredService<IHubContext<DataSender>>();
-                await dataSender.Clients.All.SendAsync("broadcastMessage", await InterrogateServices());
+                await dataSender.Clients.All.SendAsync("broadcastMessage", await InterrogateServices(true));
             }
         }
 
-        public async Task<List<ServiceStatus>> InterrogateServices()
+        public async Task<List<ServiceStatus>> InterrogateServices(bool writeToDatabase)
         {
             using (var scope = scopeFactory.CreateScope())
             {
                 var context = scope.ServiceProvider.GetRequiredService<ProgressterraContext>();
-                var interrogationService = scope.ServiceProvider.GetRequiredService<InterrogationService>();
+                var interrogation = scope.ServiceProvider.GetRequiredService<InterrogationService>();
 
-                var events = await interrogationService.InterrogateServises();
-                await context.Events.AddRangeAsync(events);
-                await context.SaveChangesAsync();
-
+                var events = await interrogation.InterrogateServises();
+                if (writeToDatabase)
+                {
+                    await context.Events.AddRangeAsync(events);
+                    await context.SaveChangesAsync();
+                }
 
 
                 bool needUpdate = LastUpdate.AddHours(1) < DateTime.Now;
@@ -116,8 +118,11 @@ namespace Progressterra.Services
 
                     if (!currentEvent.Available) serv.Status.FailsInLastDay++;
                     else
-                    if (currentEvent.ResponseTime > serv.Status.MaxDeviationInLastDay)
-                        serv.Status.MaxDeviationInLastDay = currentEvent.ResponseTime;
+                    if (currentEvent.ResponseTime > MaxResponseTime * 2)
+                    {
+                        if (serv.Status.MaxDeviationInLastDay == null || currentEvent.ResponseTime > serv.Status.MaxDeviationInLastDay)
+                            serv.Status.MaxDeviationInLastDay = currentEvent.ResponseTime;
+                    }
 
                     UpdateEventsInLastHour(serv);
                 }

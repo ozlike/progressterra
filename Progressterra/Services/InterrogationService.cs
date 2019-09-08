@@ -53,7 +53,7 @@ namespace Progressterra.Services
                     Available = result.StatusCode == System.Net.HttpStatusCode.OK,
                     EventTime = DateTime.Now,
                     ResponseTime = sec,
-                    Service = service,
+                    ServiceId = service.Id,
                 };
             }
         }

@@ -9,15 +9,6 @@ namespace Progressterra.Services
 {
     public class DataSender : Hub
     {
-        public DataSender()
-        {
-            
-        }
-
-        //public void Send(string message)
-        //{
-        //    if (Clients == null) return;
-        //    Clients.All.SendAsync("broadcastMessage", message);
-        //}
+        
     }
 }

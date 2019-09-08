@@ -11,7 +11,7 @@ namespace Progressterra.Services
         public int PollingRate { get; private set; }
         public ConfigClass(long maxResponseTime, int pollingRate)
         {
-            maxResponseTime = MaxResponseTime;
+            MaxResponseTime = maxResponseTime;
             PollingRate = pollingRate;
         }
     }
