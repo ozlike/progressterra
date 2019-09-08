@@ -22,6 +22,8 @@ namespace Progressterra.Controllers
         {
             var events = await dataProvider.InterrogateServices();
 
+            ViewBag.MaxResponseTime = dataProvider.GetMaxResponseTime();
+
 
             return View(events);
         }

@@ -13,7 +13,7 @@ namespace Progressterra.Services
 {
     public class ServiceEventsHandler : IHostedService, IDisposable
     {
-        public long MaxTimeAnswer { get; private set; }
+        public long MaxResponseTime { get; private set; }
         public int PollingRate { get; private set; }
 
         readonly IServiceScopeFactory scopeFactory;
@@ -36,7 +36,7 @@ namespace Progressterra.Services
             using (var scope = scopeFactory.CreateScope())
             {
                 var configuration = scope.ServiceProvider.GetRequiredService<ConfigClass>();
-                MaxTimeAnswer = configuration.MaxTimeAnswer;
+                MaxResponseTime = configuration.MaxResponseTime;
                 PollingRate = configuration.PollingRate;
 
                 var context = scope.ServiceProvider.GetRequiredService<ProgressterraContext>();
@@ -141,7 +141,7 @@ namespace Progressterra.Services
         }
 
         private int FailsInEvents(ICollection<Event> events) => events.Count(x => !x.Available);
-        private long? MaxDeviationInEvents(ICollection<Event> events) => events.Where(x => x.Available && x.ResponseTime > MaxTimeAnswer * 2)?.Max(x => x.ResponseTime);
+        private long? MaxDeviationInEvents(ICollection<Event> events) => events.Where(x => x.Available && x.ResponseTime > MaxResponseTime * 2)?.Max(x => x.ResponseTime);
 
 
         private void TEMP_ADD_INIT_VALUES_INTO_DATABASE(ProgressterraContext context)

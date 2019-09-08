@@ -15,6 +15,11 @@ namespace Progressterra.Context
             this.serviceEventsHandler = serviceEventsHandler;
         }
 
+        public long GetMaxResponseTime()
+        {
+            return serviceEventsHandler.MaxResponseTime;
+        }
+
         public async Task<List<ServiceStatus>> InterrogateServices()
         {
             return await serviceEventsHandler.InterrogateServices();

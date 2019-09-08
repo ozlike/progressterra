@@ -7,11 +7,11 @@ namespace Progressterra.Services
 {
     public class ConfigClass
     {
-        public long MaxTimeAnswer { get; private set; }
+        public long MaxResponseTime { get; private set; }
         public int PollingRate { get; private set; }
-        public ConfigClass(long maxTimeAnswer, int pollingRate)
+        public ConfigClass(long maxResponseTime, int pollingRate)
         {
-            MaxTimeAnswer = maxTimeAnswer;
+            maxResponseTime = MaxResponseTime;
             PollingRate = pollingRate;
         }
     }
