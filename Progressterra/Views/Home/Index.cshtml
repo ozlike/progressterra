@@ -22,7 +22,7 @@
         <tbody id="services">
             @foreach (var service in Model)
             {
-                <tr serviceId="@service.Id" onclick="goToPage('@(Url.Action("Service", "Home", new { id= service.Id }))')" class="@Html.Raw(service.Available ? "" : "not-available")">
+                <tr serviceId="@service.Id" onclick="goToPage('@(Url.Action("Service", "Home", new { id = service.Id }))')" class="@Html.Raw(service.Available ? "" : "not-available")">
                     <td><a href="@service.Url">@service.Name</a></td>
                     <td class="ResponseTime @Html.Raw(service.ResponseTime > ViewBag.MaxResponseTime * 2 ? "danger" : "")">@service.ResponseTime</td>
                     <td class="FailsInLastHour">@service.FailsInLastHour</td>

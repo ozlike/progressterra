@@ -28,6 +28,13 @@ namespace Progressterra.Controllers
             return View(events);
         }
 
+        public async Task<IActionResult> Service(int? id)
+        {
+            if (!id.HasValue) return RedirectToAction("Index", "Home");
+            
+            return View(dataProvider.GetEventsForService((int)id));
+        }
+
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {

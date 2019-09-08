@@ -9,6 +9,7 @@ namespace Progressterra.Context
     public interface IDataProvider
     {
         Task<List<ServiceStatus>> InterrogateServices();
+        List<Event> GetEventsForService(int serviceId);
         long GetMaxResponseTime();
     }
 }

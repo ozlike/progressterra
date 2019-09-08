@@ -1,0 +1,41 @@
+﻿@using Progressterra.Context
+@model List<Event>
+@{
+    ViewData["Title"] = "Service";
+}
+
+<link href="/css/main.css" rel="stylesheet" asp-append-version="true" />
+<style type="text/css">
+    .content {
+        display: block;
+        width: 600px;
+    }
+
+    @@media all and (max-width: 700px) {
+        .content {
+            width: 85%;
+        }
+    }
+</style>
+
+<div class="content">
+    <table class="services-table">
+        <thead>
+            <tr>
+                <th>Время события</th>
+                <th>Доступность</th>
+                <th>Время ответа (мс.)</th>
+            </tr>
+        </thead>
+        <tbody id="services">
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.EventTime.ToString("hh:mm:ss")</td>
+                    <td>@item.Available</td>
+                    <td>@item.ResponseTime</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
