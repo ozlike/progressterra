@@ -5,13 +5,13 @@ using System.Threading.Tasks;
 
 namespace Progressterra.Context
 {
-    public class Service
+    public class Header
     {
         public int Id { get; set; }
         public string Name { get; set; }
-        public string Url { get; set; }
+        public string Value { get; set; }
 
-        public ICollection<Header> Headers { get; set; }
-        public ICollection<Event> Events { get; set; }
+        public Service Service { get; set; }
+        public int ServiceId { get; set; }
     }
 }

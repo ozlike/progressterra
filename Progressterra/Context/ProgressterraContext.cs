@@ -14,6 +14,7 @@ namespace Progressterra.Context
         }
 
         public DbSet<Service> Services { get; set; }
+        public DbSet<Header> Headers { get; set; }
         public DbSet<Event> Events { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

@@ -1,4 +1,5 @@
-﻿using Progressterra.Context;
+﻿using Microsoft.EntityFrameworkCore;
+using Progressterra.Context;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -21,7 +22,7 @@ namespace Progressterra.Services
         {
             List<Event> events = new List<Event>();
 
-            foreach (var service in context.Services)
+            foreach (var service in context.Services.Include(x => x.Headers))
             {
                 events.Add(await MakeQuery(service));
             }
@@ -33,12 +34,18 @@ namespace Progressterra.Services
         {
             using (var httpClient = new HttpClient())
             {
-                httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/x-www-form-urlencoded"));
-                httpClient.DefaultRequestHeaders.Add("AccessKey", "test_05fc5ed1-0199-4259-92a0-2cd58214b29c");
+                if (service.Headers != null && service.Headers.Count != 0)
+                {
+                    httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/x-www-form-urlencoded"));
+                    foreach (var header in service.Headers)
+                    {
+                        httpClient.DefaultRequestHeaders.Add(header.Name, header.Value);
+                    }
+                }
                 
                 var stopWatch = Stopwatch.StartNew();
                 var result = await httpClient.GetAsync(service.Url);
-                await result.Content.ReadAsStringAsync();
+                var answer = await result.Content.ReadAsStringAsync();
                 long sec = stopWatch.ElapsedMilliseconds;
                 
                 return new Event
@@ -50,6 +57,5 @@ namespace Progressterra.Services
                 };
             }
         }
-
     }
 }

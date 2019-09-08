@@ -39,7 +39,11 @@ namespace Progressterra.Services
                 MaxTimeAnswer = configuration.MaxTimeAnswer;
                 PollingRate = configuration.PollingRate;
 
-                ServicesStates = scope.ServiceProvider.GetRequiredService<ProgressterraContext>().Services.Select(x => new ServiceDayEvents
+                var context = scope.ServiceProvider.GetRequiredService<ProgressterraContext>();
+
+                if (context.Services == null || context.Services.Count() == 0) TEMP_ADD_INIT_VALUES_INTO_DATABASE(context);
+
+                ServicesStates = context.Services.Select(x => new ServiceDayEvents
                 {
                     Status = new ServiceStatus
                     {
@@ -138,5 +142,34 @@ namespace Progressterra.Services
 
         private int FailsInEvents(ICollection<Event> events) => events.Count(x => !x.Available);
         private long? MaxDeviationInEvents(ICollection<Event> events) => events.Where(x => x.Available && x.ResponseTime > MaxTimeAnswer * 2)?.Max(x => x.ResponseTime);
+
+
+        private void TEMP_ADD_INIT_VALUES_INTO_DATABASE(ProgressterraContext context)
+        {
+            context.Services.Add(new Service
+            {
+                Name = "ibonus",
+                Url = "http://ibonus.1c-work.net/api/ibonus/version",
+            });
+            context.Services.Add(new Service
+            {
+                Name = "refdata",
+                Url = "http://iswiftdata.1c-work.net/api/refdata/version",
+            });
+            context.Services.Add(new Service
+            {
+                Name = "catalog",
+                Url = "http://iswiftdata.1c-work.net/api/catalog/catalog",
+                Headers = new List<Header>
+                {
+                    new Header()
+                    {
+                        Name = "AccessKey",
+                        Value = "test_05fc5ed1-0199-4259-92a0-2cd58214b29c",
+                    }
+                },
+            });
+            context.SaveChanges();
+        }
     }
 }
